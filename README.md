@@ -1,8 +1,8 @@
-# Capstone: Final Project, Part-3
+# Module Analyzer
 
 ### About the Program
 
-`PyStatsApp` is a command line interface that analyzes Python packages and modules. 
+`PyStatsApp` is a command line interface that analyzes Python packages and modules.
 When this script is done with analyzing, it will generate the statistics of each script.
 
 ### Additional Features from the previous project-2
@@ -43,4 +43,4 @@ There are 5 functions added under `test_statistic.py`
 
 
 
-![](img/test_sccess.png)
+![](pystats/img/test_sccess.png)
