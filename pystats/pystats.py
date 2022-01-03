@@ -61,9 +61,6 @@ class PyStatsApp:
         """Given a list of command-line arguments, returns them parsed."""
         parser = argparse.ArgumentParser()
 
-        # PROBLEM 4: Add a -o, --output argument for specifying an output file.
-
-        
         # One or more filenames are required.
         parser.add_argument('input',
                             action='store',
@@ -113,7 +110,7 @@ class PyStatsApp:
 
         return args
 
-    # PROBLEM 1
+
     @staticmethod
     def get_lines(filename):
         """Returns the lines in `filename` stripped of terminal \n."""
