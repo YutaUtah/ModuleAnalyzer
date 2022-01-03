@@ -13,7 +13,6 @@ Parses and stores:
 from collections import namedtuple
 
 
-# PROBLEM 2
 # This class should be a drop-in replacement for `namedtuple`,
 #   with the exception of the optional `lines` attribute.
 class CodeBlock:
@@ -115,20 +114,20 @@ class ParsedFile:
 
         return i // nchars
 
-    # PROBLEM 3
+
     # Note there is a new `offset` parameter.
     # This adds `offset` to the start and end indexes.
     # This is intended to allow for absolute indexes, instead of them being relative to a parent.
     @staticmethod
     def get_codeblocks(lines, keyword, indent_level=0, offset=0):
         """Parses `lines` to retrieve `CodeBlock`s starting with `keyword`.
-        
+
         Args:
             lines: Lines of Python code.
             keyword: The Python keyword beginning a code block.
             indent_level: Retrieves only blocks beginning at this indentation level.
             offset: Adds a fixed offset to the start and end indexes.
-        
+
         Returns:
             A list of `CodeBlock`s.
         """
