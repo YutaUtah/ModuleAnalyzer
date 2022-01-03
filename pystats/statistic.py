@@ -118,7 +118,6 @@ class NumMethodLines(Statistic):
                 ]
 
 
-# PROBLEM 5: Remember to add this to AVAILABLE_STATS in `pystats.py`!
 class NumClassLines(Statistic):
     """Adds the statistics "Num Class Lines" and "Num Methods" to each class."""
     def name():
@@ -135,12 +134,11 @@ class NumClassLines(Statistic):
                 f'**Num Methods:** {len(self.parsed_file.methods[class_block])}']
 
 
-# PROBLEM 6 - Your own stats!
 class WarnNoDocstring(Statistic):
 
     VALID_DOCSTRINGS = ['"""', '"', "'", "'''"]
     NO_DOCSTRING_WARNING = f'**WARNING:** Missing docstring.'
-    
+
     @staticmethod
     def name():
         return 'WarnNoDocstring'
