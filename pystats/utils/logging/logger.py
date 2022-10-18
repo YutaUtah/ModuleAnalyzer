@@ -1,5 +1,6 @@
 import logging
 import sys
+
 # COMMANDLINE
 # from pystats.utils.logging.config import LEVEL, FORMAT
 
@@ -23,18 +24,18 @@ class CustomLogger:
         self.custom_format = CustomFormatter()
         self.logger_level = LEVEL.get(level.upper())
 
-    def __setLevel(self, logger_level):
+    def _setLevel(self, logger_level):
         self.logger.setLevel(logger_level)
 
-    def __addStreamHandler(self):
+    def _addStreamHandler(self):
         ch = logging.StreamHandler()
         ch.setFormatter(self.custom_format)
         self.logger.addHandler(ch)
         self.logger.propagate = False
 
     def get_custom_logger(self):
-        self.__setLevel(self.logger_level)
+        self._setLevel(self.logger_level)
         if not self.logger.handlers:
-            self.__addStreamHandler()
+            self._addStreamHandler()
         return self.logger
 
