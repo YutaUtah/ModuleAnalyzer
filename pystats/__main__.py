@@ -13,7 +13,7 @@ import sys
 # from utils.logging.logger import Logger
 
 # COMMANDLINE
-from pystats.pystats_app import PyStatsApp
+from pystats.app.pystats_app      import PyStatsApp
 from pystats.utils.logging.logger import Logger
 
 logger = Logger(__file__)
