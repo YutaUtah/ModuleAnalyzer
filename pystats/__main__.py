@@ -7,20 +7,18 @@
 #  inside `if __name__ == '__main__':`
 
 import sys
-import logging
 
-# DEBUGGING needs to do "from pystats_app import PyStatsApp"
-# from command line, needs to do "from .pystats_app import PyStatsApp"
-from .pystats_app import PyStatsApp
+# DEBUGGING
+from pystats_app import PyStatsApp
+from utils.logging.logger import CustomLogger
 
-logging.basicConfig(
-    format='%(levelname)s: %(asctime)s [ %(filename)s line %(lineno)d] %(message)s', datefmt='%I:%M:%S %p %m/%d/%Y', level=logging.DEBUG, stream=sys.stdout
-)
+# COMMANDLINE
+# from pystats.pystats_app import PyStatsApp
+# from pystats.utils.logging.logger import CustomLogger
 
-logger = logging.getLogger(__name__)
-
+logger = CustomLogger("INFO").get_custom_logger()
 args = PyStatsApp.parse_args(sys.argv[1:])
-logging.info(f'Parsing arguments from command line. INPUT : {args.input}, STATS: {args.stats}, REPORTS: {args.reports}, OUTPUT FILENAME: {args.output_filename}, VERBOSE: {args.verbose}')
+logger.info(f'Parsing arguments from command line. INPUT : {args.input}, STATS: {args.stats}, REPORTS: {args.reports}, OUTPUT FILENAME: {args.output_filename}, VERBOSE: {args.verbose}')
 app = PyStatsApp(args.verbose)
 
 app.run(
