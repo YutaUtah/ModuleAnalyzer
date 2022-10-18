@@ -11,7 +11,7 @@ import os
 from collections import defaultdict
 
 # COMMANDLINE
-from pystats.config               import OUTPUT_FILENAME_BASE
+from pystats.config.config        import OUTPUT_FILENAME_BASE
 from pystats.parsed_file          import ParsedFile
 from pystats.statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, DunderMethodPythonPackage
 from pystats.report               import MarkdownReport
