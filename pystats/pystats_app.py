@@ -4,27 +4,31 @@ pystats.py
 A command-line interface to `pystats`.
 """
 
+import argparse
 import os
 import sys
-import argparse
-
 from collections import defaultdict
 
 # In a package, the working directory is no longer the package directory,
 #   so `from parsed_file ...` and `import statistic` will no longer work:
-
-# from parsed_file import ParsedFile
-# import statistic
-# import report
-
 # In a package, we can write imports either relative to the package `pystats`,
 #   or relative to this file using `.`.
-from .parsed_file import ParsedFile
-from .statistic import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, dunderMethodPythonPackage
-from .report import MarkdownReport
 
-# Default output filename (without a file extension)
+# COMMANDLINE
+# from pystats.parsed_file          import ParsedFile
+# from pystats.statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, dunderMethodPythonPackage
+# from pystats.report               import MarkdownReport
+# from pystats.utils.logging.logger import CustomLogger
+
+# DEBUG
+from parsed_file          import ParsedFile
+from statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, dunderMethodPythonPackage
+from report               import MarkdownReport
+from utils.logging.logger import CustomLogger
+
 OUTPUT_FILENAME_BASE = 'out'
+
+logger = CustomLogger("INFO").get_custom_logger()
 
 class PyStatsApp:
     """
@@ -62,11 +66,13 @@ class PyStatsApp:
         parser = argparse.ArgumentParser()
 
         # One or more filenames are required.
-        parser.add_argument('input',
-                            action='store',
-                            nargs='+',
-                            metavar='FILENAME',
-                            help='the input Python file(s)')
+        parser.add_argument(
+            'input',
+            action='store',
+            nargs='+',
+            metavar='FILENAME',
+            help='the input Python file(s)'
+        )
 
         # Specifying one or more stats is optional. By default, will run all stats.
         parser.add_argument(
@@ -100,15 +106,15 @@ class PyStatsApp:
             help='enter the output filename')
 
         # For testing/debugging, can generate additional output based on this flag.
-        parser.add_argument("--silent",
-                            action="store_false",
-                            dest="verbose",
-                            default=True,
-                            help='silence output')
+        parser.add_argument(
+            "--silent",
+            action="store_false",
+            dest="verbose",
+            default=True,
+            help='silence output'
+        )
 
-        args = parser.parse_args(arguments)
-
-        return args
+        return parser.parse_args(arguments)
 
 
     @staticmethod
@@ -138,20 +144,22 @@ class PyStatsApp:
                 lines = []
 
                 if verbose:
-                    print(f'- Parsing "{filename}" ... ', end='')
+                    logger.info(f'Parsing "{filename}"')
 
                 # Read lines from the file
                 try:
                     lines = PyStatsApp.get_lines(filename)
                 except:
                     if verbose:
-                        print('ERROR OPENING - Skipped.')
+                        #todo: exception more restrict rule
+                        modulename = filename.split('/')[-1]
+                        logger.error(f'ERROR OPENING {modulename} Skipping.')
 
                 # Parse the lines
                 if lines:
                     modules.append(ParsedFile(filename, lines))
                     if verbose:
-                        print('OK')
+                        logger.info(f'Finished parsing {filename}')
 
         return modules
 
@@ -178,6 +186,7 @@ class PyStatsApp:
         )
 
     def get_abs_path_python_filenames(self, python_filenames):
+        #todo: better way to write
         return [os.path.join(self.root_dir, python_filename) for python_filename in python_filenames ]
 
     def write_report(self,
@@ -201,10 +210,10 @@ class PyStatsApp:
         try:
             report.write(filename_base)
             if self.verbose:
-                print(f'- Saved {report.name()} to "{out_filename}".')
+                logger.info(f'Saved {report.name()} to "{out_filename}".')
         except:
             if self.verbose:
-                print(f'- Error saving {report.name()} to "{out_filename}".')
+                logger.error(f'Error saving {report.name()} to "{out_filename}".')
 
     def run(self,
             python_filenames,
@@ -252,40 +261,37 @@ class PyStatsApp:
         )
 
         if self.verbose:
-            print(f'Parsed {len(self.modules)} Python module(s).\n')
+            logger.info(f'Parsed {len(self.modules)} Python module(s)')
 
         # 2. COMPUTE STATS
         # Maps each `ParsedFile` to a list of `Statistic`s.
-        self.stats = defaultdict(list)
         for module in self.modules:
             for ComputedStat in requested_stats:
                 self.stats[module].append(ComputedStat(module))
 
         # package directory list for Package statistics
         if package_stats_names:
-            self.package_stats = defaultdict(list)
             for stats in requested_package_name:
                 self.pkgstats['PackageStats'].append(stats(self.dir_list))
 
         # 3. GENERATE REPORTS
         for ComputedReport in requested_reports:
-            self.write_report(ComputedReport,
-                              self.stats,
-                              filename_base=filename_base[0])
+            self.write_report(
+                ComputedReport,
+                self.stats,
+                filename_base=filename_base[0]
+            )
 
 if __name__ == '__main__':
 
     args = PyStatsApp.parse_args(sys.argv[1:])
+    logger.info(f'Parsing arguments: {args} from command line')
     app = PyStatsApp(args.verbose)
-    # print(args.input)
-    # print(args.output_filename[0])
-    # print(args.stats)
-    # print(args.reports)
-    print(args, 'printing args')
+
     app.run(
         args.input,
         filename_base=args.output_filename[0],
         stat_names=args.stats,
         report_names=args.reports
     )
-    print('DONE')
+    logger.info(f'Successfully finished the job in {__name__}')
