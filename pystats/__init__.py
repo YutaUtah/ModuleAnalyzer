@@ -10,7 +10,7 @@
 #  >> pystats.PyStatsApp           # Valid because `PyStatsApp` is imported below
 #  >> pystats.statistic.Statistic  # Valid because `statistic` is imported below
 
-from pystats.pystats import PyStatsApp
+from pystats.pystats_app import PyStatsApp
 from pystats.parsed_file import CodeBlock, ParsedFile
 
 from pystats.report import Report
