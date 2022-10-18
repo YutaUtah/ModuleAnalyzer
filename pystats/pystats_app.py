@@ -1,39 +1,37 @@
-"""
-pystats.py
-
+'''
 A command-line interface to `pystats`.
-"""
 
-import argparse
+In a package, the working directory is no longer the package directory,
+  so `from parsed_file ...` and `import statistic` will no longer work:
+In a package, we can write imports either relative to the package `pystats`,
+  or relative to this file using `.`.
+'''
+
 import os
-import sys
 from collections import defaultdict
 
-# In a package, the working directory is no longer the package directory,
-#   so `from parsed_file ...` and `import statistic` will no longer work:
-# In a package, we can write imports either relative to the package `pystats`,
-#   or relative to this file using `.`.
-
 # COMMANDLINE
-# from pystats.parsed_file          import ParsedFile
-# from pystats.statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, dunderMethodPythonPackage
-# from pystats.report               import MarkdownReport
-# from pystats.utils.logging.logger import CustomLogger
+from pystats.config               import OUTPUT_FILENAME_BASE
+from pystats.parsed_file          import ParsedFile
+from pystats.statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, DunderMethodPythonPackage
+from pystats.report               import MarkdownReport
+from pystats.utils.logging.logger import Logger
+from pystats.utils.args_parser    import add_parser_options
 
 # DEBUG
-from parsed_file          import ParsedFile
-from statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, dunderMethodPythonPackage
-from report               import MarkdownReport
-from utils.logging.logger import CustomLogger
+# from pystats.config               import OUTPUT_FILENAME_BASE
+# from parsed_file          import ParsedFile
+# from statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, DunderMethodPythonPackage
+# from report               import MarkdownReport
+# from utils.logging.logger import Logger
+# from utils.args_parser    import add_parser_options
 
-OUTPUT_FILENAME_BASE = 'out'
-
-logger = CustomLogger("INFO").get_custom_logger()
+logger = Logger(__file__)
 
 class PyStatsApp:
-    """
+    '''
     A command-line interface to `pystats`.
-    """
+    '''
     ########################
     # Class Variables
     ########################
@@ -44,7 +42,7 @@ class PyStatsApp:
         NumMethodLines,
         NumClassLines,
         WarnNoDocstring,
-        dunderMethodPythonPackage,
+        DunderMethodPythonPackage,
     ]
 
     AVAILABLE_REPORTS = [
@@ -52,74 +50,22 @@ class PyStatsApp:
     ]
 
     PACKAGE_STATS = [
-        dunderMethodPythonPackage,
+        DunderMethodPythonPackage,
     ]
     ########################
     # Static Methods
     ########################
 
-    # For more information about `argparse`, see:
-    #    https://docs.python.org/3/howto/argparse.html
     @staticmethod
     def parse_args(arguments):
-        """Given a list of command-line arguments, returns them parsed."""
-        parser = argparse.ArgumentParser()
-
-        # One or more filenames are required.
-        parser.add_argument(
-            'input',
-            action='store',
-            nargs='+',
-            metavar='FILENAME',
-            help='the input Python file(s)'
-        )
-
-        # Specifying one or more stats is optional. By default, will run all stats.
-        parser.add_argument(
-            '-s',
-            '--stats',
-            action='store',
-            default=[],
-            nargs='*',
-            choices=[s.name() for s in PyStatsApp.AVAILABLE_STATS],
-            help=
-            'include only the specified one or more stats (default: all stats)'
-        )
-
-        # Specifying one or more reports is optional. By default, will generate a Markdown report.
-        parser.add_argument(
-            '-r',
-            '--reports',
-            action='store',
-            default=[],
-            nargs='*',
-            choices=[r.name() for r in PyStatsApp.AVAILABLE_REPORTS],
-            help='generate only the specified one or more reports')
-
-        # Specifying the output filename.
-        parser.add_argument(
-            '-o',
-            '--output_filename',
-            action='store',
-            default=['out'],
-            nargs='*',
-            help='enter the output filename')
-
-        # For testing/debugging, can generate additional output based on this flag.
-        parser.add_argument(
-            "--silent",
-            action="store_false",
-            dest="verbose",
-            default=True,
-            help='silence output'
-        )
-
+        '''Given a list of command-line arguments, returns them parsed.'''
+        parser = add_parser_options(PyStatsApp)
         return parser.parse_args(arguments)
 
 
     @staticmethod
     def get_lines(filename):
-        """Returns the lines in `filename` stripped of terminal \n."""
+        '''Returns the lines in `filename` stripped of terminal.'''
         lines = []
         # todo:
         # filename = '/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/statistic.py'
@@ -189,11 +135,14 @@ class PyStatsApp:
         #todo: better way to write
         return [os.path.join(self.root_dir, python_filename) for python_filename in python_filenames ]
 
-    def write_report(self,
-                     ComputedReport,
-                     stats,
-                     filename_base=OUTPUT_FILENAME_BASE):
-        """Generates a report of type `ComputedReport` and writes it to disk.
+    def write_report(
+        self,
+        ComputedReport,
+        stats,
+        filename_base=OUTPUT_FILENAME_BASE
+    ):
+        '''
+        Generates a report of type `ComputedReport` and writes it to disk.
 
         Args:
         - ComputedReport: A class that inherits from `Report`.
@@ -201,7 +150,7 @@ class PyStatsApp:
 
         Returns:
         - None (Writes the report file to disk.)
-        """
+        '''
         report = ComputedReport(self.modules, stats)
 
         out_filename = filename_base + report.file_extension()
@@ -221,10 +170,10 @@ class PyStatsApp:
             stat_names=[],
             report_names=[],
             package_stats_names=[]):
-        """
+        '''
         Parses each Python file/module, computes each `stats` statistic per module,
          then generates each of the `reports`.
-        """
+        '''
 
         # Map each
         requested_stats = PyStatsApp.AVAILABLE_STATS
@@ -281,17 +230,3 @@ class PyStatsApp:
                 self.stats,
                 filename_base=filename_base[0]
             )
-
-if __name__ == '__main__':
-
-    args = PyStatsApp.parse_args(sys.argv[1:])
-    logger.info(f'Parsing arguments: {args} from command line')
-    app = PyStatsApp(args.verbose)
-
-    app.run(
-        args.input,
-        filename_base=args.output_filename[0],
-        stat_names=args.stats,
-        report_names=args.reports
-    )
-    logger.info(f'Successfully finished the job in {__name__}')
