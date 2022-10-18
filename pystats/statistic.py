@@ -1,7 +1,7 @@
-"""
+'''
 statistic.py
 
-Statistics computed on a `ParsedFile`. 
+Statistics computed on a `ParsedFile`.
 
 Each class inherits from `Statistic` and individually computes a statistic.
 
@@ -9,10 +9,15 @@ To add a new stat:
 1. Create a new class derived from `Statistic`.
 2. Implement the `name()` and `compute(self)` methods.
 3. Register the stat with the command-line program in `pystats.py`.
-"""
+'''
 
+from abc         import ABCMeta, abstractmethod
 from collections import defaultdict
-from abc import ABCMeta, abstractmethod
+
+#COMMANDLINE
+from pystats.utils.logging.logger import Logger
+
+logger = Logger(__file__)
 
 
 class Statistic(metaclass=ABCMeta):
@@ -95,7 +100,7 @@ class NumFuncLines(Statistic):
             self.function_stats[func_block] += [
                 f'**Num Function Lines:** {len(func_block)}'
             ]
-            print(len(func_block))
+            logger.info(f'Length of the function blocks is {len(func_block)}')
 
 
 # Example 3: Method stats
@@ -148,7 +153,7 @@ class WarnNoDocstring(Statistic):
         """Returns True if the method has a docstring on the second line."""
         # Assume docstring is on the line following the signature
         line = method_lines[1].lstrip()
-        
+
         return any(line.startswith(s) for s in WarnNoDocstring.VALID_DOCSTRINGS)
 
     def add_docstring_warning(self, func_block):
@@ -170,7 +175,7 @@ class WarnNoDocstring(Statistic):
                 self.add_docstring_warning(method_block)
 
 
-class dunderMethodPythonPackage(Statistic):
+class DunderMethodPythonPackage(Statistic):
     """Compute number of non python files in a package"""
     @staticmethod
     def name():
