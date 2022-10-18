@@ -1,1 +1,0 @@
-OUTPUT_FILENAME_BASE = 'out'
