@@ -1,7 +1,7 @@
 """
 parsed_file.py
 
-Represents a Python module (aka file). 
+Represents a Python module (aka file).
 
 Parses and stores:
 - Lines of code in the module
@@ -92,7 +92,7 @@ class ParsedFile:
     ########################
     @staticmethod
     def num_indents(line, indent=INDENT):
-        """ 
+        '''
         Counts how many times `indent` repeats at the start of `line`.
 
         Ignores partial indents, even though they may be invalid Python.
@@ -103,7 +103,7 @@ class ParsedFile:
 
         Returns:
             The indentation level of the line of code.
-        """
+        '''
         nchars = len(indent)
         if nchars == 0:
             return 0
@@ -210,14 +210,15 @@ class ParsedFile:
                 f'num_classes={len(self.functions)})')
 
     def parse(self):
-        """Parses the Python module.
+        '''
+        Parses the Python module.
 
-        Returns: 
+        Returns:
             (functions, classes, methods):
                 functions: A list of top-level function `ClassBlock`s.
                 classes: A list of top-level class `ClassBlock`s.
                 methods: A dict mapping each class to a list of method `ClassBlock`s.
-        """
+        '''
         # Parse the top-level functions and classes
         functions = ParsedFile.get_functions(self.lines)
         classes = ParsedFile.get_classes(self.lines)
