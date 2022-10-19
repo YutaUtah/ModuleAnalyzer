@@ -15,7 +15,9 @@ from abc         import ABCMeta, abstractmethod
 from collections import defaultdict
 
 #COMMANDLINE
-from pystats.utils.logging.logger import Logger
+# from pystats.utils.logging.logger import Logger
+#DEBUGGING
+from utils.logging.logger import Logger
 
 logger = Logger(__file__)
 
