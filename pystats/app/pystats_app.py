@@ -20,7 +20,7 @@ from config.config               import OUTPUT_FILENAME_BASE
 from context.package_context             import PackageContext
 from utils.logging.logger        import Logger
 
-logger = Logger(__file__)
+logger = Logger(__name__).logger
 
 
 class PyStatsApp:
@@ -121,11 +121,14 @@ class PyStatsApp:
                 logger.info(f'Root Dir: {root}, Directory: {dirs}, File Names: {filenames}, Package Depth: {PackageContext.get_package_depth(root)}')
                 package_layer.append(package_layer_info)
 
+        print(python_filenames)
         # 1. PARSE MODULES
         self.modules = PackageContext.parse_modules(
             filenames=PackageContext.get_abs_path_python_filenames(python_filenames),
             verbose=self.verbose
         )
+        #TODO:
+        logger.info(f'Parsed File Info: {self.modules}')
 
         if self.verbose:
             logger.info(f'Parsed {len(self.modules)} Python module(s)')

@@ -11,7 +11,7 @@ import sys
 # DEBUG
 from utils.logging.logger import Logger
 
-logger = Logger(__file__)
+logger = Logger(__name__).logger
 
 
 # This class should be a drop-in replacement for `namedtuple`,

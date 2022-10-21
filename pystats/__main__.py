@@ -16,7 +16,7 @@ from utils.logging.logger import Logger
 # from pystats.app.pystats_app      import PyStatsApp
 # from pystats.utils.logging.logger import Logger
 
-logger = Logger(__file__)
+logger = Logger(__name__).logger
 
 def main():
     args = PackageContext.parse_args(sys.argv[1:])

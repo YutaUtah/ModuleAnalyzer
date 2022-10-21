@@ -19,7 +19,7 @@ from collections import defaultdict
 #DEBUGGING
 from utils.logging.logger import Logger
 
-logger = Logger(__file__)
+logger = Logger(__name__).logger
 
 
 class Statistic(metaclass=ABCMeta):
