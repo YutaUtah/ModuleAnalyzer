@@ -7,7 +7,7 @@ class Color(Enum):
     RESET = "\x1b[0m"
 
 class Format(Enum):
-    LOG_FORMAT = "%(levelname)s:\t %(asctime)s %(message)s (%(filename)s:%(lineno)d)"
+    LOG_FORMAT = "%(levelname)s:\t %(asctime)s %(message)s (%(filename)s:%(lineno)d %(funcName)s)"
 
 class DisplayFormat(Enum):
     FORMAT = Color.RED.value + Format.LOG_FORMAT.value + Color.RESET.value
