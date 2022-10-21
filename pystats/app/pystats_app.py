@@ -13,11 +13,11 @@ from collections import defaultdict
 # COMMANDLINE
 # from pystats.config.config        import OUTPUT_FILENAME_BASE
 # from pystats.utils.logging.logger import Logger
-# from pystats.package_context      import PackageContext
+# from pystats.context.package_context      import PackageContext
 
 # DEBUG
 from config.config               import OUTPUT_FILENAME_BASE
-from package_context             import PackageContext
+from context.package_context             import PackageContext
 from utils.logging.logger        import Logger
 
 logger = Logger(__file__)
