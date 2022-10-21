@@ -10,12 +10,19 @@ import sys
 
 # DEBUG
 from parsed_file          import ParsedFile
-from statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, DunderMethodPythonPackage
 from report               import MarkdownReport
 from utils.logging.logger import Logger
 from utils.args_parser    import add_parser_options
+from statistic            import (
+    NumModuleLines,
+    NumFuncLines,
+    NumMethodLines,
+    NumClassLines,
+    WarnNoDocstring,
+    DunderMethodPythonPackage
+)
 
-logger = Logger(__file__)
+logger = Logger(__name__).logger
 
 class PackageContext:
 
@@ -47,7 +54,7 @@ class PackageContext:
 
 
     @staticmethod
-    def get_abs_path_python_filenames( python_filenames):
+    def get_abs_path_python_filenames(python_filenames):
         # TODO: better way to write
         # TODO: this isn't robust 'User/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/app/statistic.py'
         return [os.path.join(PackageContext.PACKAGE_BASE_DIR, python_filename) for python_filename in python_filenames ]
@@ -94,11 +101,11 @@ class PackageContext:
                 # Read lines from the file
                 try:
                     lines = PackageContext.get_lines(filename)
-                except:
+                except Exception as error:
                     if verbose:
-                        #todo: exception more restrict rule
                         modulename = filename.split('/')[-1]
-                        logger.error(f'ERROR OPENING {modulename} Skipping.')
+                        logger.error(f'ERROR OPENING {modulename}')
+                    raise error
 
                 # Parse the lines
                 if lines:
