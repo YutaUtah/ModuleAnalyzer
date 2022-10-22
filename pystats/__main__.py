@@ -9,12 +9,13 @@ Note this code was previously in pystats.py
 import sys
 
 # DEBUGGING
-from app.pystats_app import PyStatsApp, PackageContext
-from utils.logging.logger import Logger
-
+try:
+    from app.pystats_app import PyStatsApp, PackageContext
+    from utils.logging.logger import Logger
 # COMMANDLINE
-# from pystats.app.pystats_app      import PyStatsApp
-# from pystats.utils.logging.logger import Logger
+except:
+    from pystats.app.pystats_app      import PyStatsApp, PackageContext
+    from pystats.utils.logging.logger import Logger
 
 logger = Logger(__name__).logger
 
@@ -22,7 +23,7 @@ def main():
     args = PackageContext.parse_args(sys.argv[1:])
     logger.info(f'''Parsing arguments from command line. INPUT : {args.input}, STATS: {args.stats}, REPORTS: {args.reports}, OUTPUT FILENAME: {args.output_filename}, VERBOSE: {args.verbose}''')
     app = PyStatsApp(args.verbose)
-    # print(args.input)
+    # print(args): Namespace(input=['statistic.py'], stats=[], reports=[], output_filename=['out'], verbose=True)
     app.run(
         args.input,
         filename_base=args.output_filename,
