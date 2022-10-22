@@ -8,23 +8,28 @@ In a package, we can write imports either relative to the package `pystats`,
 '''
 
 import os
-from collections import defaultdict
+from   collections import defaultdict
+from   pathlib import Path
 
 try:
 # DEBUG
     from config.config               import OUTPUT_FILENAME_BASE
-    from context.package_context             import PackageContext
+    from context.package_context     import PackageContext
+    from utils.format_tree           import DisplayablePath
     from utils.logging.logger        import Logger
 except:
 # COMMANDLINE
     from pystats.config.config        import OUTPUT_FILENAME_BASE
     from pystats.utils.logging.logger import Logger
     from pystats.context.package_context      import PackageContext
+    from pystats.utils.format_tree           import DisplayablePath
 
 
 
 logger = Logger(__name__).logger
-
+# With a criteria (skip hidden files)
+def is_not_hidden(path):
+    return not path.name.startswith(".")
 
 class PyStatsApp:
     '''
@@ -112,8 +117,11 @@ class PyStatsApp:
         # scenario when its package
         if PackageContext.is_package(python_filenames):
             package_layer = []
-            for root, dirs, filename in os.walk(PackageContext.PACKAGE_BASE_DIR):
-                dirs.remove('__pycache__')
+            for root, dirs, filename in os.walk(PackageContext.PACKAGE_BASE_DIR, topdown=False):
+                if '/.git' in root or root.endswith('__pycache__'):
+                    continue
+                if '__pycache__' in dirs:
+                    dirs.remove('__pycache__')
                 filenames = [filename for filename in filename if not filename.endswith('.pyc')]
                 package_layer_info = {
                     'root': root,
@@ -121,10 +129,11 @@ class PyStatsApp:
                     'filenames': filenames,
                     'package_depth': PackageContext.get_package_depth(root),
                 }
-                logger.info(f'Root Dir: {root}, Directory: {dirs}, File Names: {filenames}, Package Depth: {PackageContext.get_package_depth(root)}')
+                # logger.info(f'Root Dir: {root}, Directory: {dirs}, File Names: {filenames}, Package Depth: {PackageContext.get_package_depth(root)}')
                 package_layer.append(package_layer_info)
 
-        print(python_filenames)
+            DisplayablePath.printTree(python_filenames[0])
+
         # 1. PARSE MODULES
         self.modules = PackageContext.parse_modules(
             filenames=PackageContext.get_abs_path_python_filenames(python_filenames),
