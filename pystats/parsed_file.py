@@ -9,9 +9,14 @@ Parses and stores:
 - Top-level class codeblocks and their respective method codeblocks
 
 """
-
-from collections import namedtuple
-from context.file_context         import FileContext
+try:
+#DEBUGGING
+    from collections            import namedtuple
+    from context.file_context   import FileContext
+except:
+#COMMANDLINE
+    from collections                    import namedtuple
+    from pystats.context.file_context   import FileContext
 
 
 class ParsedFile:

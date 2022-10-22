@@ -14,10 +14,12 @@ To add a new stat:
 from abc         import ABCMeta, abstractmethod
 from collections import defaultdict
 
-#COMMANDLINE
-# from pystats.utils.logging.logger import Logger
+try:
 #DEBUGGING
-from utils.logging.logger import Logger
+    from utils.logging.logger import Logger
+except:
+#COMMANDLINE
+    from pystats.utils.logging.logger import Logger
 
 logger = Logger(__name__).logger
 

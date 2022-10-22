@@ -1,15 +1,10 @@
-import os
-import sys
 
-# COMMANDLINE
-# from pystats.parsed_file          import ParsedFile
-# from pystats.statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, DunderMethodPythonPackage
-# from pystats.report               import MarkdownReport
-# from pystats.utils.logging.logger import Logger
-# from pystats.utils.args_parser    import add_parser_options
-
+try:
 # DEBUG
-from utils.logging.logger import Logger
+    from utils.logging.logger import Logger
+except:
+# COMMANDLINE
+    from pystats.utils.logging.logger import Logger
 
 logger = Logger(__name__).logger
 
