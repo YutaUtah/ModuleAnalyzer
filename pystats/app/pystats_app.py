@@ -10,15 +10,18 @@ In a package, we can write imports either relative to the package `pystats`,
 import os
 from collections import defaultdict
 
-# COMMANDLINE
-# from pystats.config.config        import OUTPUT_FILENAME_BASE
-# from pystats.utils.logging.logger import Logger
-# from pystats.context.package_context      import PackageContext
-
+try:
 # DEBUG
-from config.config               import OUTPUT_FILENAME_BASE
-from context.package_context             import PackageContext
-from utils.logging.logger        import Logger
+    from config.config               import OUTPUT_FILENAME_BASE
+    from context.package_context             import PackageContext
+    from utils.logging.logger        import Logger
+except:
+# COMMANDLINE
+    from pystats.config.config        import OUTPUT_FILENAME_BASE
+    from pystats.utils.logging.logger import Logger
+    from pystats.context.package_context      import PackageContext
+
+
 
 logger = Logger(__name__).logger
 
