@@ -7,8 +7,13 @@ setup(
     author='Yuta Hayashi',
     author_email='yuta.hayashi96@gmail.com',
     url='https://github.com/YutaUtah/ModuleAnalyzer',
-    keywords=['design', 'pattern', 'patterns', 'pattyrn', 'template'],
+    keywords=['python module', 'analyzer', 'file management', 'search', 'python'],
     license='MIT',
     classifiers=[],
     packages=find_packages(exclude=('tests', 'tests.*')),
+    entry_points={
+        'console_scripts':[
+            'pystats = pystats.__main__:main',
+        ],
+    },
 )
