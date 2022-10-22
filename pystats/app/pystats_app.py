@@ -9,7 +9,6 @@ In a package, we can write imports either relative to the package `pystats`,
 
 import os
 from   collections import defaultdict
-from   pathlib import Path
 
 try:
 # DEBUG
