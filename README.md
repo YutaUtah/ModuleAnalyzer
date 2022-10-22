@@ -28,19 +28,3 @@ This program is designed to work for both single python module or package.
   `$  python -m pystats pystats`
 
 This will generate a report file `out.md`
-
-
-
-### Test Functions
-
-- All the test functions are within `pystats/tests` directories.
-There are 5 functions added under `test_statistic.py`
-  - `test_num_module_lines`: test function for to test `statistic.NumModuleLines`
-  - `test_num_func_lines`: test function for to test `statistic.NumFuncLines`
-  - `test_num_method_lines`: test function for to test `statistic.NumMethodLines`
-  - `test_num_class_lines`: test function for to test `statistic.NumClassLines`
-  - `test_dunder_method`: test function for to test `statistic.dunderMethodPythonPackage`
-
-
-
-![](pystats/img/test_sccess.png)
