@@ -1,26 +1,29 @@
 import os
 import sys
 
+try:
+    # DEBUG
+    from parsed_file          import ParsedFile
+    from report               import MarkdownReport
+    from utils.logging.logger import Logger
+    from utils.args_parser    import add_parser_options
+    from statistic            import (
+        NumModuleLines,
+        NumFuncLines,
+        NumMethodLines,
+        NumClassLines,
+        WarnNoDocstring,
+        DunderMethodPythonPackage
+    )
+except:
 # COMMANDLINE
-# from pystats.parsed_file          import ParsedFile
-# from pystats.statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, DunderMethodPythonPackage
-# from pystats.report               import MarkdownReport
-# from pystats.utils.logging.logger import Logger
-# from pystats.utils.args_parser    import add_parser_options
+    from pystats.parsed_file          import ParsedFile
+    from pystats.statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, DunderMethodPythonPackage
+    from pystats.report               import MarkdownReport
+    from pystats.utils.logging.logger import Logger
+    from pystats.utils.args_parser    import add_parser_options
 
-# DEBUG
-from parsed_file          import ParsedFile
-from report               import MarkdownReport
-from utils.logging.logger import Logger
-from utils.args_parser    import add_parser_options
-from statistic            import (
-    NumModuleLines,
-    NumFuncLines,
-    NumMethodLines,
-    NumClassLines,
-    WarnNoDocstring,
-    DunderMethodPythonPackage
-)
+
 
 logger = Logger(__name__).logger
 
@@ -42,7 +45,8 @@ class PackageContext:
     PACKAGE_STATS = [
         DunderMethodPythonPackage,
     ]
-    PACKAGE_BASE_DIR = os.path.dirname(sys.modules['__main__'].__file__)
+    # PACKAGE_BASE_DIR = os.path.dirname(sys.modules['__main__'].__file__)
+    PACKAGE_BASE_DIR = os.getcwd()
 
     @staticmethod
     def is_package(python_filenames):
@@ -71,10 +75,12 @@ class PackageContext:
     def get_lines(filename):
         '''Returns the lines in `filename` stripped of terminal.'''
         lines = []
-        # todo:
-        # filename = '/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/statistic.py'
-        with open(filename, 'r') as f:
-            lines = [line.rstrip('\n') for line in f.readlines()]
+
+        try:
+            with open(filename, 'r') as f:
+                lines = [line.rstrip('\n') for line in f.readlines()]
+        except FileNotFoundError as e:
+            raise e
 
         return lines
 
