@@ -7,3 +7,12 @@
 #  >> import pystats
 #  >> pystats.PyStatsApp           # Valid because `PyStatsApp` is imported below
 #  >> pystats.statistic.Statistic  # Valid because `statistic` is imported below
+
+from __future__ import annotations
+
+# >> import pystats
+# ['Logger', 'PackageContext', 'PyStatsApp', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__', 'app', 'config', 'context', 'parsed_file', 'report', 'statistic', 'utils']
+# >>> pystats.PackageContext
+# <class 'pystats.context.package_context.PackageContext'>
+
+from pystats.app.pystats_app      import PyStatsApp
