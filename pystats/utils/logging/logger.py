@@ -35,7 +35,7 @@ class Logger(logging.Formatter):
         self._setLevel(self.logger_level)
         if not self.logger.handlers:
             self._add_stream_Handler()
-        return self.logger
+
 
     def getEffectiveLevel(self):
         return self.logger.getEffectiveLevel()
@@ -53,7 +53,7 @@ class Logger(logging.Formatter):
 
     def info(self, log):
         if self.is_valid_logger("INFO", log):
-                self.logger.info(log)
+            self.logger.info(log)
         else:
             self.logger.error("Text log is empty")
 
