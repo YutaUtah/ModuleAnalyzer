@@ -92,7 +92,7 @@ class PyStatsApp:
 
         try:
             for python_package in python_packages:
-                file_hierarchy_list.append(DisplayablePath.get_sorted_paths(python_package))
+                file_hierarchy_list.append(DisplayablePath.getPaths(python_package))
 
         except (FileNotFoundError, TypeError):
             if not isinstance(python_packages, list):
