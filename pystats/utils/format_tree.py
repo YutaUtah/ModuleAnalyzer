@@ -1,15 +1,12 @@
 from pathlib import Path
 
-# With a criteria (skip hidden files)
-def is_not_hidden(path):
-    return not path.name.startswith(".")
 
 class DisplayablePath(object):
     display_filename_prefix_middle = '├──'
     display_filename_prefix_last = '└──'
     display_parent_prefix_middle = '    '
     display_parent_prefix_last = '│   '
-
+    list = []
     def __init__(self, path, parent_path, is_last):
         self.path = Path(str(path))
         self.parent = parent_path
@@ -19,18 +16,31 @@ class DisplayablePath(object):
         else:
             self.depth = 0
 
+
     @property
-    def displayname(self):
+    def _displayname(self):
         if self.path.is_dir():
             return self.path.name + '/'
         return self.path.name
 
+
+    @property
+    def get_absolute_path(self):
+        if not self.path.is_dir() and self.path.name.endswith('.py'):
+            return self.path.absolute()
+
+
     @classmethod
-    def make_tree(cls, root, parent=None, is_last=False, criteria=None):
+    def _default_criteria(cls, path):
+        return True
+
+
+    @classmethod
+    def _make_tree(cls, root, parent=None, is_last=False, criteria=None):
         root = Path(str(root))
         criteria = criteria or cls._default_criteria
-
         displayable_root = cls(root, parent, is_last)
+
         yield displayable_root
 
         children = sorted(list(path
@@ -42,34 +52,26 @@ class DisplayablePath(object):
             is_last = count == len(children)
             if path.is_dir():
                 if not str(path).endswith('__pycache__'):
-                    yield from cls.make_tree(path,
+                    yield from cls._make_tree(path,
                                             parent=displayable_root,
                                             is_last=is_last,
                                             criteria=criteria)
             else:
                 yield cls(path, displayable_root, is_last)
+
             count += 1
 
-    @classmethod
-    def _default_criteria(cls, path):
-        return True
 
-    @property
-    def displayname(self):
-        if self.path.is_dir():
-            return self.path.name + '/'
-        return self.path.name
-
-    def displayable(self):
+    def _displayable(self):
         if self.parent is None:
-            return self.displayname
+            return self._displayname
 
         _filename_prefix = (self.display_filename_prefix_last
                             if self.is_last
                             else self.display_filename_prefix_middle)
 
         parts = ['{!s} {!s}'.format(_filename_prefix,
-                                    self.displayname)]
+                                    self._displayname)]
 
         parent = self.parent
         while parent and parent.parent is not None:
@@ -79,15 +81,28 @@ class DisplayablePath(object):
             parent = parent.parent
         return ''.join(reversed(parts))
 
+
+    @classmethod
+    def getPaths(cls, filename):
+        absolute_paths_list = []
+        paths = cls._make_tree(
+            Path(filename),
+        )
+        for path in paths:
+            if path.get_absolute_path:
+                absolute_paths_list.append(path.get_absolute_path)
+        return absolute_paths_list
+
+
     @classmethod
     def printTree(cls, filename):
-        paths = cls.make_tree(
+        paths = cls._make_tree(
             Path(filename),
-            criteria=is_not_hidden
         )
+
         print('================================================================')
         print('============             TREE STRUCTURE             ============')
         print('================================================================')
 
         for path in paths:
-            print(path.displayable())
+            print(path._displayable())
