@@ -94,6 +94,7 @@ class FileContext:
             i += nchars
 
         return i // nchars
+
     @staticmethod
     def get_codeblocks(lines, keyword, indent_level=0, offset=0):
         """Parses `lines` to retrieve `CodeBlock`s starting with `keyword`.
@@ -120,11 +121,14 @@ class FileContext:
                     if FileContext.num_indents(line) <= indent_level:
                         block_lines = lines[block_start:i]
                         blocks.append(
-                            CodeBlock(keyword,
-                                      block_sig,
-                                      block_start + offset,
-                                      i + offset,
-                                      lines=block_lines))
+                            CodeBlock(
+                                keyword,
+                                block_sig,
+                                block_start + offset,
+                                i + offset,
+                                lines=block_lines
+                            )
+                        )
                         block_sig = ''
 
                 # Start of a new block
