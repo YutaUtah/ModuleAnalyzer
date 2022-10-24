@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path, PosixPath
 
 
 class DisplayablePath(object):
@@ -6,7 +6,7 @@ class DisplayablePath(object):
     display_filename_prefix_last = '└──'
     display_parent_prefix_middle = '    '
     display_parent_prefix_last = '│   '
-    list = []
+
     def __init__(self, path, parent_path, is_last):
         self.path = Path(str(path))
         self.parent = parent_path
@@ -43,10 +43,15 @@ class DisplayablePath(object):
 
         yield displayable_root
 
-        children = sorted(list(path
-                               for path in root.iterdir()
-                               if criteria(path)),
-                          key=lambda s: str(s).lower())
+        children = sorted(
+            list(
+                path
+                for path in root.iterdir()
+                if criteria(path)
+            ),
+            key=lambda s: str(s).lower()
+        )
+
         count = 1
         for path in children:
             is_last = count == len(children)
@@ -84,14 +89,14 @@ class DisplayablePath(object):
 
     @classmethod
     def getPaths(cls, filename):
-        absolute_paths_list = []
-        paths = cls._make_tree(
-            Path(filename),
-        )
-        for path in paths:
-            if path.get_absolute_path:
-                absolute_paths_list.append(path.get_absolute_path)
-        return absolute_paths_list
+        paths = cls._make_tree(Path(filename))
+
+        return [
+            path.get_absolute_path
+            for path in paths
+            if path.get_absolute_path
+        ]
+
 
 
     @classmethod
