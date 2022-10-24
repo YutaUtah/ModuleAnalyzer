@@ -19,23 +19,6 @@ except:
     from app.pystats_app         import PyStatsApp
 
 
-paths = PyStatsApp(verbose=True).getPaths(['pystats'])
+# paths = PyStatsApp(verbose=True).getReports(packagename_path=['/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats', '/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/utils'])
 
-import os
-for l in paths:
-    temp_dir_collection = set()
-    os.makedirs('./pystats_report/', exist_ok=True)
-    for path in l[1:]:
-        report_name = './' + str(path.relative_to(os.getcwd())).split('/')[0] + '_report'
-        sub_dir_path = '/'.join(str(path.relative_to(os.getcwd())).split('/')[1:-1])
-        sub_file_path = '/'.join(str(path.relative_to(os.getcwd())).split('/')[1:]) if len(str(path.relative_to(os.getcwd())).split('/')) != 2 else ''
-        report_path = os.path.join(os.getcwd(), report_name)
-        if sub_dir_path not in temp_dir_collection:
-            os.makedirs(os.path.join(report_name, sub_dir_path), exist_ok=True)
-            temp_dir_collection.add(sub_dir_path)
-        if len(sub_file_path) == 0:
-            sub_file_path = str(path).split('/')[-1]
-        target_md_path = os.path.join(report_name, sub_file_path).replace('.py', '.md')
-        with open(target_md_path, mode='w') as f:
-            f.write('hello!')
-# PyStatsApp(verbose=True).printTree(['pystats'])
+# PyStatsApp(verbose=True).getReports()
