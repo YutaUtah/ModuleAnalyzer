@@ -9,6 +9,8 @@ In a package, we can write imports either relative to the package `pystats`,
 
 import os
 from   collections import defaultdict
+from   pathlib     import Path
+from plistlib import InvalidFileException
 
 try:
 # DEBUG
@@ -102,6 +104,65 @@ class PyStatsApp:
 
 
         return file_hierarchy_list
+
+
+    def getReports(self, packagename_path=[], target_creation_path=None):
+        '''
+        Generates reports for given packages as a markdown format. Note that non-python file report will not be generated
+
+        Args:
+        - packagename_path: A list of targetd "absolute" package directory paths i.e. Mac starts from '/Users/yutahayashi/... Cannot be empty.
+        - target_creation_path: Absolute path that you wish to store your generated markdown report. If you leave it empty, your terminal/console path will be the root directory.
+
+        Returns:
+        - None (Writes the report file to disk.)
+        '''
+
+        def already_exist(folder):
+            return folder in existed_folders
+
+        if isinstance(packagename_path, list):
+            if len(packagename_path) == 0:
+                raise FileNotFoundError('package path is absolute and mandatory field')
+            if len(packagename_path) == 1:
+                if not packagename_path[0] :
+                    raise InvalidFileException('[""] is not allowed. Please put appropriate package directory.')
+
+        if not isinstance(packagename_path, list):
+            raise TypeError('Package absolute path needs to be in list: str object must be encolsed with []')
+
+        try:
+            package_file_paths = self.getPaths(packagename_path)
+        except Exception as e:
+            raise e.message
+
+        # if not target_creation_path:
+        target_creation_path = target_creation_path or os.getcwd()
+
+        for i, paths in enumerate(package_file_paths):
+            existed_folders = set()
+            PACKAGE_NAME = os.path.basename(packagename_path[i])
+            REPORT_BASE_FOLDER = os.path.join(target_creation_path, PACKAGE_NAME + '_report')
+            # Create the generate report base folder
+            os.makedirs(REPORT_BASE_FOLDER, exist_ok=True)
+
+            for path in paths[1:]:
+
+                TARGET_FOLDER = str(path.parent)
+                # if TARGET_FOLDER not in existed_folders:
+                if not already_exist(TARGET_FOLDER):
+                    RELATIVE_PACKAGE_PATH = os.path.relpath(TARGET_FOLDER, packagename_path[i])
+                    os.makedirs(os.path.join(REPORT_BASE_FOLDER, RELATIVE_PACKAGE_PATH), exist_ok=True)
+                    existed_folders.add(TARGET_FOLDER)
+
+                RELATIVE_MODULE_PATH, ABSOLUTE_MODULE_PATH = os.path.relpath(path, packagename_path[i]), os.path.join(REPORT_BASE_FOLDER, RELATIVE_MODULE_PATH)
+
+                if ABSOLUTE_MODULE_PATH.endswith('.py'):
+                    ABSOLUTE_MODULE_PATH = ABSOLUTE_MODULE_PATH.replace('.py', '.md')
+                else:
+                    raise InvalidFileException('Currently only Python extention is supported. Apologies for the inconvenience...')
+                with open(ABSOLUTE_MODULE_PATH, mode='w') as f:
+                    f.write('hello!')
 
 
     def write_report(
