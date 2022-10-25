@@ -132,7 +132,7 @@ class PyStatsApp:
                 if not packagename_path[0] :
                     raise InvalidFileException('[""] is not allowed. Please put appropriate package directory.')
 
-        if not isinstance(packagename_path, list):
+        else:
             raise TypeError('Package absolute path needs to be in list: str object must be encolsed with []')
 
         try:
@@ -145,27 +145,35 @@ class PyStatsApp:
 
         for i, paths in enumerate(package_file_paths):
             existed_folders = set()
-            PACKAGE_NAME = os.path.basename(packagename_path[i])
-            REPORT_BASE_FOLDER = os.path.join(target_creation_path, PACKAGE_NAME + '_report')
-            # Create the generate report base folder
-            os.makedirs(REPORT_BASE_FOLDER, exist_ok=True)
+            report_folder_base = os.path.join(target_creation_path, os.path.basename(packagename_path[i]) + '_report')
+
+            # Create the generate report base folder i.e. package_name + _report
+            os.makedirs(report_folder_base, exist_ok=True)
 
             for path in paths[1:]:
 
-                TARGET_FOLDER = str(path.parent)
+                target_folder = str(path.parent)
+                absolute_module_path = os.path.join(report_folder_base, os.path.relpath(path, packagename_path[i]))
+
                 # if TARGET_FOLDER not in existed_folders:
-                if not already_exist(TARGET_FOLDER):
-                    RELATIVE_PACKAGE_PATH = os.path.relpath(TARGET_FOLDER, packagename_path[i])
-                    os.makedirs(os.path.join(REPORT_BASE_FOLDER, RELATIVE_PACKAGE_PATH), exist_ok=True)
-                    existed_folders.add(TARGET_FOLDER)
+                if not already_exist(target_folder):
+                    os.makedirs(
+                        os.path.join(
+                            report_folder_base,
+                            os.path.relpath(target_folder, packagename_path[i])
+                        ),
+                    exist_ok=True
+                    )
+                    existed_folders.add(target_folder)
 
-                RELATIVE_MODULE_PATH, ABSOLUTE_MODULE_PATH = os.path.relpath(path, packagename_path[i]), os.path.join(REPORT_BASE_FOLDER, RELATIVE_MODULE_PATH)
+                if not absolute_module_path.endswith('.py'):
+                    raise InvalidFileException(
+                        'Currently only Python extention is supported. Apologies for the inconvenience...'
+                    )
 
-                if ABSOLUTE_MODULE_PATH.endswith('.py'):
-                    ABSOLUTE_MODULE_PATH = ABSOLUTE_MODULE_PATH.replace('.py', '.md')
-                else:
-                    raise InvalidFileException('Currently only Python extention is supported. Apologies for the inconvenience...')
-                with open(ABSOLUTE_MODULE_PATH, mode='w') as f:
+                absolute_report_path = absolute_module_path.replace('.py', '.md')
+
+                with open(absolute_report_path, mode='w') as f:
                     f.write('hello!')
 
 
