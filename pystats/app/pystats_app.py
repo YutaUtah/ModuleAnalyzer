@@ -8,8 +8,9 @@ In a package, we can write imports either relative to the package `pystats`,
 '''
 
 import os
-from   collections import defaultdict
-from   plistlib import InvalidFileException
+from collections import defaultdict
+from functools import wraps
+from plistlib import InvalidFileException
 
 try:
 # DEBUG
@@ -53,15 +54,13 @@ class PyStatsApp:
 
 
     def _print_header(func):
-
+        @wraps(func)
         def inner(self, python_packages):
             print('================================================================')
             print('============             TREE STRUCTURE             ============')
-            print('================================================================')
-
+            print('================================================================\n')
             func(self, python_packages)
-
-            print('================================================================')
+            print('\n================================================================')
 
         return inner
 
@@ -81,15 +80,28 @@ class PyStatsApp:
             ├── __init__.py
             └── pystats_app.py
         '''
-        try:
-            for python_package in python_packages:
-                DisplayablePath.printTree(python_package)
+        self._printTree(python_packages)
 
-        except (FileNotFoundError, TypeError):
-            if not isinstance(python_packages, list):
+
+    def _printTree(self, python_packages):
+        if isinstance(python_packages, list):
+            if all(map(lambda x: isinstance(x, str), python_packages)):
+                try:
+                    for python_package in python_packages:
+                        DisplayablePath.printTree(python_package)
+                except ModuleNotFoundError:
+                    raise FileNotFoundError(f'not package: {python_package}: please make sure if the path is appropriate')
+            else:
                 raise TypeError(f'type mismatch (python_packages): list is expected for {python_packages}')
-            if PackageContext.is_package(python_packages):
-                raise FileNotFoundError(f'not package: {python_package}')
+
+        else:
+            if not isinstance(python_packages, str):
+                raise TypeError(f'type mismatch (python_packages): list is expected for your input: {python_packages}')
+            try:
+                logger.warning(f'Input must be list type, forcing it with str: "{python_packages}"')
+                DisplayablePath.printTree(python_packages)
+            except FileNotFoundError:
+                raise FileNotFoundError(f'not package: {python_packages}: please make sure if the path is appropriate')
 
 
     def getPaths(self, python_packages):
@@ -109,7 +121,7 @@ class PyStatsApp:
             for python_package in python_packages:
                 file_hierarchy_list.append(DisplayablePath.getPaths(python_package))
 
-        except (FileNotFoundError, TypeError):
+        except (TypeError, FileNotFoundError):
             if not isinstance(python_packages, list):
                 raise TypeError(f'type mismatch (python_packages): list is expected for {python_packages}')
             if PackageContext.is_package(python_packages):
