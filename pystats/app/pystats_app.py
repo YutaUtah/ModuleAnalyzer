@@ -96,15 +96,15 @@ class PyStatsApp:
 
         file_hierarchy_list = []
 
+        if not isinstance(python_packages, list):
+            raise TypeError(f'type mismatch (python_packages): list is expected for {python_packages}')
+
         try:
             for python_package in python_packages:
                 file_hierarchy_list.append(DisplayablePath.getPaths(python_package))
 
-        except (TypeError, FileNotFoundError):
-            if not isinstance(python_packages, list):
-                raise TypeError(f'type mismatch (python_packages): list is expected for {python_packages}')
-            if PackageContext.is_package(python_packages):
-                raise FileNotFoundError(f'not package: {python_package}')
+        except FileNotFoundError:
+            raise FileNotFoundError(f'not package: {python_package}')
 
 
         return file_hierarchy_list
