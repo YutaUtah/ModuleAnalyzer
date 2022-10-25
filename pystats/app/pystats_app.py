@@ -94,19 +94,13 @@ class PyStatsApp:
                         f'not package: {python_package}: please make sure if the path is appropriate'
                     )
             else:
-                raise TypeError(f'type mismatch (python_packages): list is expected for {python_packages}')
+                raise TypeError(
+                    f'type mismatch (python_packages): list is expected for {python_packages}'
+                )
 
         else:
-            if not isinstance(python_packages, str):
-                raise TypeError(
-                    f'type mismatch (python_packages): list is expected for your input: {python_packages}'
-                    )
-            try:
-                logger.warning(f'Input must be list type, forcing it with str: "{python_packages}"')
-                DisplayablePath.printTree(python_packages)
-            except FileNotFoundError:
-                raise FileNotFoundError(
-                    f'not package: {python_packages}: please make sure if the path is appropriate'
+            raise TypeError(
+                f'type mismatch (python_packages): list is expected for your input: {python_packages}'
                 )
 
 
