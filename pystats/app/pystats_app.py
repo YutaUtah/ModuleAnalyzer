@@ -83,27 +83,6 @@ class PyStatsApp:
         self._printTree(python_packages)
 
 
-    def _printTree(self, python_packages):
-        if isinstance(python_packages, list):
-            if all(map(lambda x: isinstance(x, str), python_packages)):
-                try:
-                    for python_package in python_packages:
-                        DisplayablePath.printTree(python_package)
-                except FileNotFoundError:
-                    raise FileNotFoundError(
-                        f'not package: {python_package}: please make sure if the path is appropriate'
-                    )
-            else:
-                raise TypeError(
-                    f'type mismatch (python_packages): list is expected for {python_packages}'
-                )
-
-        else:
-            raise TypeError(
-                f'type mismatch (python_packages): list is expected for your input: {python_packages}'
-                )
-
-
     def getPaths(self, python_packages):
         '''
         Get the list of package paths that are displayed as absolute path
@@ -218,6 +197,29 @@ class PyStatsApp:
         except:
             if self.verbose:
                 logger.error(f'Error saving {report.name()} to "{out_filename}".')
+
+
+    def _printTree(self, python_packages):
+        if isinstance(python_packages, list):
+            if all(map(lambda x: isinstance(x, str), python_packages)):
+                try:
+                    for python_package in python_packages:
+                        DisplayablePath.printTree(python_package)
+                    return
+
+                except FileNotFoundError:
+                    raise FileNotFoundError(
+                        f'not package: {python_package}: please make sure if the path is appropriate'
+                    )
+            else:
+                raise TypeError(
+                    f'type mismatch (one of the elements in python_packages): all elements must be str. Check {python_packages}'
+                )
+
+        raise TypeError(
+            f'type mismatch (python_packages): list is expected for your input: {python_packages}'
+            )
+
 
     def run(
         self,
