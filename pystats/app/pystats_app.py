@@ -9,8 +9,7 @@ In a package, we can write imports either relative to the package `pystats`,
 
 import os
 from   collections import defaultdict
-from   pathlib     import Path
-from plistlib import InvalidFileException
+from   plistlib import InvalidFileException
 
 try:
 # DEBUG
@@ -26,8 +25,8 @@ except:
     from pystats.utils.format_tree           import DisplayablePath
 
 
-
 logger = Logger(__name__).logger
+
 
 # With a criteria (skip hidden files)
 def is_not_hidden(path):
@@ -53,6 +52,21 @@ class PyStatsApp:
         )
 
 
+    def _print_header(func):
+
+        def inner(self, python_packages):
+            print('================================================================')
+            print('============             TREE STRUCTURE             ============')
+            print('================================================================')
+
+            func(self, python_packages)
+
+            print('================================================================')
+
+        return inner
+
+
+    @_print_header
     def printTree(self, python_packages):
         '''
         Print the tree structure of specified python_packages.
@@ -67,7 +81,6 @@ class PyStatsApp:
             ├── __init__.py
             └── pystats_app.py
         '''
-
         try:
             for python_package in python_packages:
                 DisplayablePath.printTree(python_package)

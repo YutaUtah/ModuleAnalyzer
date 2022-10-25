@@ -1,5 +1,24 @@
 from pathlib import Path, PosixPath
 
+# def hello_decorator(func):
+
+#     # inner1 is a Wrapper function in
+#     # which the argument is called
+
+#     # inner function can access the outer local
+#     # functions like in this case "func"
+#     def inner():
+#         print('================================================================')
+#         print('============             TREE STRUCTURE             ============')
+#         print('================================================================')
+
+#         # calling the actual function now
+#         # inside the wrapper function.
+#         func()
+
+#         print("This is after function execution")
+
+#     return inner
 
 class DisplayablePath(object):
     display_filename_prefix_middle = '├──'
@@ -101,13 +120,11 @@ class DisplayablePath(object):
 
     @classmethod
     def printTree(cls, filename):
+
         paths = cls._make_tree(
             Path(filename),
         )
 
-        print('================================================================')
-        print('============             TREE STRUCTURE             ============')
-        print('================================================================')
-
         for path in paths:
             print(path._displayable())
+
