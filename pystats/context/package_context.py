@@ -97,7 +97,7 @@ class PackageContext:
 
         # Parse each module
         for filename in filenames:
-            filename = filename.strip()
+            filename = str(filename).strip()
             if filename:
                 lines = []
 
