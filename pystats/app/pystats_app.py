@@ -29,10 +29,6 @@ except:
 logger = Logger(__name__).logger
 
 
-# With a criteria (skip hidden files)
-def is_not_hidden(path):
-    return not path.name.startswith(".")
-
 class PyStatsApp:
     '''
     A command-line interface to `pystats`.
@@ -106,7 +102,6 @@ class PyStatsApp:
         except FileNotFoundError:
             raise FileNotFoundError(f'not package: {python_package}')
 
-
         return file_hierarchy_list
 
 
@@ -128,9 +123,6 @@ class PyStatsApp:
         if isinstance(packagename_path, list):
             if len(packagename_path) == 0:
                 raise FileNotFoundError('package path is absolute and mandatory field')
-            if len(packagename_path) == 1:
-                if not packagename_path[0] :
-                    raise InvalidFileException('[""] is not allowed. Please put appropriate package directory.')
 
         else:
             raise TypeError('Package absolute path needs to be in list: str object must be encolsed with []')
@@ -259,39 +251,25 @@ class PyStatsApp:
             requested_reports = PackageContext.AVAILABLE_REPORTS
 
         if package_stats_names:
-            requested_package_name = [
+            requested_stats_name = [
                 s for s in PackageContext.PACKAGE_STATS if s.name() in package_stats_names
             ]
         else:
-            package_stats_names = PackageContext.PACKAGE_STATS
+            requested_stats_name = PackageContext.PACKAGE_STATS
 
 
         # scenario when its package
         if PackageContext.is_package(python_filenames):
-            package_layer = []
-            for root, dirs, filename in os.walk(PackageContext.PACKAGE_BASE_DIR, topdown=False):
-                if '/.git' in root or root.endswith('__pycache__'):
-                    continue
-                if '__pycache__' in dirs:
-                    dirs.remove('__pycache__')
-                filenames = [filename for filename in filename if not filename.endswith('.pyc')]
-                package_layer_info = {
-                    'root': root,
-                    'dirs': dirs,
-                    'filenames': filenames,
-                    'package_depth': PackageContext.get_package_depth(root),
-                }
-                # logger.info(f'Root Dir: {root}, Directory: {dirs}, File Names: {filenames}, Package Depth: {PackageContext.get_package_depth(root)}')
-                package_layer.append(package_layer_info)
-
+            python_filenames = self.getPaths(python_filenames)
 
         # 1. PARSE MODULES
-        self.modules = PackageContext.parse_modules(
-            filenames=PackageContext.get_abs_path_python_filenames(python_filenames),
-            verbose=self.verbose
-        )
-        #TODO:
-        logger.info(f'Parsed File Info: {self.modules}')
+        for filenames in python_filenames:
+            self.modules = PackageContext.parse_modules(
+                filenames=filenames,
+                verbose=self.verbose
+            )
+
+        # logger.info(f'Parsed File Info: {self.modules}')
 
         if self.verbose:
             logger.info(f'Parsed {len(self.modules)} Python module(s)')
@@ -304,11 +282,12 @@ class PyStatsApp:
 
         # package directory list for Package statistics
         if package_stats_names:
-            for stats in requested_package_name:
+            for stats in requested_stats_name:
                 self.pkgstats['PackageStats'].append(stats(self.dir_list))
 
         # 3. GENERATE REPORTS
         for ComputedReport in requested_reports:
+            logger.info(f'parsing {ComputedReport.name()}')
             self.write_report(
                 ComputedReport,
                 self.stats,
