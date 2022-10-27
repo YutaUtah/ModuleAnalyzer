@@ -1,4 +1,5 @@
 from pathlib import Path, PosixPath
+from types import ClassMethodDescriptorType
 
 # def hello_decorator(func):
 
@@ -116,6 +117,13 @@ class DisplayablePath(object):
             if path.get_absolute_path
         ]
 
+
+    @classmethod
+    def getMarkdownPath(cls, filename):
+        paths = cls._make_tree(
+            Path(filename),
+        )
+        return [path._displayable() for path in paths]
 
 
     @classmethod
