@@ -48,11 +48,14 @@ class ParsedFile:
         self.functions, self.classes, self.methods = self.parse()
 
     def __repr__(self):
-        return (f'ParsedFile(filename={self.filename}, '
-                f'name={self.name}, '
-                f'num_lines={len(self.lines)}, '
-                f'num_functions={len(self.functions)}, '
-                f'num_classes={len(self.functions)})')
+        return (
+            f'ParsedFile(filename={self.filename}, '
+            f'name={self.name}, '
+            f'num_lines={len(self.lines)}, '
+            f'num_functions={len(self.functions)}, '
+            f'num_classes={len(self.functions)}), '
+            f'num_methods={len(self.methods)}),'
+        )
 
     def parse(self):
         '''
@@ -75,6 +78,7 @@ class ParsedFile:
                 class_block.
                 lines,  # Assumes `lines` is part of ClassBlock(..., lines=<>)
                 indent_level=1,
-                offset=class_block.start)
+                offset=class_block.start
+            )
 
         return functions, classes, methods
