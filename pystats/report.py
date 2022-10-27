@@ -27,6 +27,7 @@ class Report(metaclass=ABCMeta):
             parsed_files: A list of `ParsedFile` objects
             statistics: A dict of `ParsedFile` keys, with a list of `Statistic`s for each.
         """
+        print(parsed_files)
         self.parsed_files = parsed_files
         self.statistics = statistics
 
@@ -82,6 +83,7 @@ class MarkdownReport(Report):
         """Returns the report as a string."""
         markdown_lines = ['# `pystats` Report']
         markdown_lines += [f'**Num Modules:** {len(self.parsed_files)}']
+        # TODO: include _printTree maybe not a great idea to break encapsulation..... check this module L30
 
         # For each module ...
         for module in self.parsed_files:
@@ -91,7 +93,7 @@ class MarkdownReport(Report):
             markdown_lines += [f'\n---\n']
 
             # MODULE
-            markdown_lines += [f'## mod {module.name}']
+            markdown_lines += [f'## module: {module.name}']
             # Module-level stats
             for stat in stats:
                 markdown_lines += [f'- {s}' for s in stat.module_stats]
@@ -99,7 +101,7 @@ class MarkdownReport(Report):
             # For each class ...
             markdown_lines += [f'### Classes']
             if not module.classes:
-                markdown_lines += [f'- (None)']
+                markdown_lines += [f'- No Class']
 
             for class_block in module.classes:
                 # CLASS
@@ -127,7 +129,7 @@ class MarkdownReport(Report):
             # FUNCTIONS
             markdown_lines += [f'### Functions']
             if not module.functions:
-                markdown_lines += [f'- (None)']
+                markdown_lines += [f'- No Function']
 
             for func_block in sorted(module.functions,
                                      key=lambda fb: fb.signature):
