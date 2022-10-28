@@ -53,7 +53,7 @@ class ParsedFile:
             f'name={self.name}, '
             f'num_lines={len(self.lines)}, '
             f'num_functions={len(self.functions)}, '
-            f'num_classes={len(self.functions)}), '
+            f'num_classes={len(self.functions)}, '
             f'num_methods={len(self.methods)}),'
         )
 
