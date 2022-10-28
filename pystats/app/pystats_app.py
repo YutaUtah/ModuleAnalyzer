@@ -234,6 +234,8 @@ class PyStatsApp:
          then generates each of the `reports`.
         '''
 
+        self.module_display_name = [os.path.relpath(file, os.getcwd()) for file in python_filenames]
+
         # Map each
         if stat_names:
             requested_stats = [
@@ -260,10 +262,12 @@ class PyStatsApp:
 
         # scenario when its package
         if PackageContext.is_package(python_filenames):
-            python_filenames = self.getPaths(python_filenames)
+            filenames_list_by_package = self.getPaths(python_filenames)
 
-        # 1. PARSE MODULES
-        for filenames in python_filenames:
+        # "Parse Module": store in ParsedFile class
+        # filenames_list_by_package is a collection of list: [[file1, file2],[file3, file4]]...
+        # filenames is a collection of filenames: [file1, file2...]
+        for filenames in filenames_list_by_package:
             self.modules = PackageContext.parse_modules(
                 filenames=filenames,
                 verbose=self.verbose
@@ -281,13 +285,15 @@ class PyStatsApp:
                 self.stats[module].append(ComputedStat(module))
 
         # package directory list for Package statistics
+        # package_stats_name inherits from the args
         if package_stats_names:
             for stats in requested_stats_name:
                 self.pkgstats['PackageStats'].append(stats(self.dir_list))
 
-        # 3. GENERATE REPORTS
+        # Generate Reports
         for ComputedReport in requested_reports:
             logger.info(f'parsing {ComputedReport.name()}')
+            # include printTree from format_tree func
             self.write_report(
                 ComputedReport,
                 self.stats,
