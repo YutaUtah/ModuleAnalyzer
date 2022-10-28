@@ -79,7 +79,7 @@ class PyStatsApp:
         self._printTree(python_packages)
 
 
-    def getPaths(self, python_packages):
+    def getPaths(self, python_package):
         '''
         Get the list of package paths that are displayed as absolute path
 
@@ -90,19 +90,17 @@ class PyStatsApp:
         /Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/app/pystats_app.py
         '''
 
-        file_hierarchy_list = []
 
-        if not isinstance(python_packages, list):
-            raise TypeError(f'type mismatch (python_packages): list is expected for {python_packages}')
+        #TODO: error handling
+        if not isinstance(python_package, str):
+            raise TypeError(f'type mismatch (python_package): string is expected for {python_package}')
 
         try:
-            for python_package in python_packages:
-                file_hierarchy_list.append(DisplayablePath.getPaths(python_package))
+            return DisplayablePath.getPaths(python_package)
 
         except FileNotFoundError:
-            raise FileNotFoundError(f'not package: {python_package}')
+            raise FileNotFoundError(f'Unable to get package paths: {python_package}')
 
-        return file_hierarchy_list
 
 
     def getReports(self, packagename_path=[], target_creation_path=None):
@@ -223,7 +221,7 @@ class PyStatsApp:
 
     def run(
         self,
-        python_filenames,
+        pypackage_paths,
         filename_base=OUTPUT_FILENAME_BASE,
         stat_names=[],
         report_names=[],
@@ -233,9 +231,9 @@ class PyStatsApp:
         Parses each Python file/module, computes each `stats` statistic per module,
          then generates each of the `reports`.
         '''
-
-        self.module_display_name = [os.path.relpath(file, os.getcwd()) for file in python_filenames]
-
+        #TODO: error handling
+        self.module_display_name = os.path.basename(pypackage_paths)
+        # print(self.module_display_name)
         # Map each
         if stat_names:
             requested_stats = [
@@ -259,21 +257,16 @@ class PyStatsApp:
         else:
             requested_stats_name = PackageContext.PACKAGE_STATS
 
-
         # scenario when its package
-        if PackageContext.is_package(python_filenames):
-            filenames_list_by_package = self.getPaths(python_filenames)
+        if PackageContext.is_package(pypackage_paths):
+            module_paths = self.getPaths(pypackage_paths)
 
         # "Parse Module": store in ParsedFile class
-        # filenames_list_by_package is a collection of list: [[file1, file2],[file3, file4]]...
-        # filenames is a collection of filenames: [file1, file2...]
-        for filenames in filenames_list_by_package:
-            self.modules = PackageContext.parse_modules(
-                filenames=filenames,
-                verbose=self.verbose
-            )
-
-        # logger.info(f'Parsed File Info: {self.modules}')
+        # module_paths is a collection of filenames: [file1, file2...]
+        self.modules = PackageContext.parse_modules(
+            filenames=module_paths,
+            verbose=self.verbose
+        )
 
         if self.verbose:
             logger.info(f'Parsed {len(self.modules)} Python module(s)')
