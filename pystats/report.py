@@ -27,7 +27,6 @@ class Report(metaclass=ABCMeta):
             parsed_files: A list of `ParsedFile` objects
             statistics: A dict of `ParsedFile` keys, with a list of `Statistic`s for each.
         """
-        print(parsed_files)
         self.parsed_files = parsed_files
         self.statistics = statistics
 
