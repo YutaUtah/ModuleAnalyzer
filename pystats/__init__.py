@@ -23,7 +23,8 @@ except:
 
 # paths = PyStatsApp(verbose=True).getReports(packagename_path=['/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats', '/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/utils'])
 paths = PyStatsApp(verbose=True).run(
-        ['/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats'],
+            '/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats',
+            # '/Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/utils'
     )
     # print(args): Namespace(input=['statistic.py'], stats=[], reports=[], output_filename=['out'], verbose=True)
 
