@@ -101,7 +101,12 @@ class PyStatsApp:
         except FileNotFoundError:
             raise FileNotFoundError(f'Unable to get package paths: {python_package}')
 
-
+    def getMarkdownPath(self, pakcage):
+        try:
+            return DisplayablePath.getMarkdownPath(pakcage)
+        except:
+            raise FileNotFoundError(f'Unable to get package paths: {pakcage}')
+            pass
 
     def getReports(self, packagename_path=[], target_creation_path=None):
         '''
@@ -171,6 +176,7 @@ class PyStatsApp:
         self,
         ComputedReport,
         stats,
+        tree,
         filename_base=OUTPUT_FILENAME_BASE
     ):
         '''
@@ -183,7 +189,7 @@ class PyStatsApp:
         Returns:
         - None (Writes the report file to disk.)
         '''
-        report = ComputedReport(self.modules, stats)
+        report = ComputedReport(self.modules, stats, tree)
 
         out_filename = filename_base + report.file_extension()
 
@@ -232,8 +238,8 @@ class PyStatsApp:
          then generates each of the `reports`.
         '''
         #TODO: error handling
-        self.module_display_name = os.path.basename(pypackage_paths)
-        # print(self.module_display_name)
+        self.tree_markdown = self.getMarkdownPath(os.path.relpath(pypackage_paths, os.getcwd()))
+
         # Map each
         if stat_names:
             requested_stats = [
@@ -290,5 +296,6 @@ class PyStatsApp:
             self.write_report(
                 ComputedReport,
                 self.stats,
+                self.tree_markdown,
                 filename_base=filename_base[0]
             )
