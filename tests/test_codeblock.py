@@ -1,11 +1,9 @@
-import pytest
-
 from pystats.parsed_file import CodeBlock
 
 
 class TestCodeBlock:
     """ It is best to precisely define what is meant by the code()
-        and len() in the original class. 
+        and len() in the original class.
 
         Here, we will define them as follows (and revise the class to reflect this):
 

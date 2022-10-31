@@ -4,7 +4,6 @@ from pystats import PyStatsApp
 INPUT_DIR = 'tests/inputs/'
 
 
-
 class TestGetLines:
     def test_empty_file(self):
         lines = PyStatsApp.get_lines(f'{INPUT_DIR}lines-empty.py')
