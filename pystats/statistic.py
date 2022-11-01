@@ -11,15 +11,15 @@ To add a new stat:
 3. Register the stat with the command-line program in `pystats.py`.
 '''
 
-from abc         import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 
 try:
-#DEBUGGING
-    from utils.logging.logger import Logger
-except:
-#COMMANDLINE
-    from pystats.utils.logging.logger import Logger
+    # DEBUGGING
+    from logger.logger import Logger
+except Exception:
+    # COMMANDLINE
+    from pystats.logger.logger import Logger
 
 logger = Logger(__name__).logger
 
@@ -146,7 +146,7 @@ class NumClassLines(Statistic):
 class WarnNoDocstring(Statistic):
 
     VALID_DOCSTRINGS = ['"""', '"', "'", "'''"]
-    NO_DOCSTRING_WARNING = f'**WARNING:** Missing docstring.'
+    NO_DOCSTRING_WARNING = '**WARNING:** Missing docstring.'
 
     @staticmethod
     def name():
@@ -164,7 +164,8 @@ class WarnNoDocstring(Statistic):
         """Add 'no docstring' warning if no docstring exists."""
         if not self.has_docstring(func_block.lines):
             self.function_stats[func_block] += [
-                WarnNoDocstring.NO_DOCSTRING_WARNING]
+                WarnNoDocstring.NO_DOCSTRING_WARNING
+            ]
 
     def compute(self):
         """Add 'no docstring' warning for each function and method."""
