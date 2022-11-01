@@ -15,7 +15,6 @@ from plistlib import InvalidFileException
 try:
     # DEBUG
     from config.config import OUTPUT_FILENAME_BASE
-    print('hello')
     from context.package_context import PackageContext
     from utils.format_tree import DisplayablePath
     from logger.logger import Logger
@@ -124,12 +123,6 @@ class PyStatsApp:
             return folder in existed_folders
 
         if isinstance(packagename_path, list):
-            if len(packagename_path) == 0:
-                raise FileNotFoundError(
-                    'package path is absolute and mandatory field'
-                )
-
-        else:
             raise TypeError(
                 'Package absolute path needs to be in list: str object must be encolsed with []'
             )
@@ -142,42 +135,43 @@ class PyStatsApp:
         # if not target_creation_path:
         target_creation_path = target_creation_path or os.getcwd()
 
-        for i, paths in enumerate(package_file_paths):
+        for paths in package_file_paths:
             existed_folders = set()
             report_folder_base = os.path.join(
                 target_creation_path,
-                os.path.basename(packagename_path[i]) + '_report'
+                os.path.basename(packagename_path) + '_report'
             )
 
             # Create the generate report base folder
             # i.e. package_name + _report
             os.makedirs(report_folder_base, exist_ok=True)
 
-            for path in paths[1:]:
+            target_folder = str(paths.parent)
+            absolute_module_path = os.path.join(
+                                        report_folder_base,
+                                        os.path.relpath(paths, packagename_path)
+                                    )
 
-                target_folder = str(path.parent)
-                absolute_module_path = os.path.join(report_folder_base, os.path.relpath(path, packagename_path[i]))
+            # if TARGET_FOLDER not in existed_folders:
+            if not already_exist(target_folder):
+                os.makedirs(
+                    os.path.join(
+                        report_folder_base,
+                        os.path.relpath(target_folder, packagename_path)
+                    ),
+                    exist_ok=True
+                )
+                existed_folders.add(target_folder)
 
-                # if TARGET_FOLDER not in existed_folders:
-                if not already_exist(target_folder):
-                    os.makedirs(
-                        os.path.join(
-                            report_folder_base,
-                            os.path.relpath(target_folder, packagename_path[i])
-                        ),
-                        exist_ok=True
-                    )
-                    existed_folders.add(target_folder)
+            if not absolute_module_path.endswith('.py'):
+                raise InvalidFileException(
+                    'Currently only Python extention is supported.'
+                )
 
-                if not absolute_module_path.endswith('.py'):
-                    raise InvalidFileException(
-                        'Currently only Python extention is supported. Apologies for the inconvenience...'
-                    )
+            absolute_report_path = absolute_module_path.replace('.py', '.md')
 
-                absolute_report_path = absolute_module_path.replace('.py', '.md')
-
-                with open(absolute_report_path, mode='w') as f:
-                    f.write('hello!')
+            with open(absolute_report_path, mode='w') as f:
+                f.write('hello!')
 
     def write_report(
         self,
