@@ -2,8 +2,8 @@
 
 ### About the Program
 
-`PyStatsApp` is a command line interface that analyzes Python packages and modules.
-When this script is done with analyzing, it will generate the statistics of each script.
+`PyStatsApp` is a package that analyzes Python packages and modules.
+When this script is done with analyzing, it will generate the statistics of each script in a designated markdown file.
 
 ### Additional Features from the previous project-2
 
