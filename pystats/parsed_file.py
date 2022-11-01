@@ -10,13 +10,11 @@ Parses and stores:
 
 """
 try:
-#DEBUGGING
-    from collections            import namedtuple
-    from context.file_context   import FileContext
-except:
-#COMMANDLINE
-    from collections                    import namedtuple
-    from pystats.context.file_context   import FileContext
+    # DEBUGGING
+    from context.file_context import FileContext
+except Exception:
+    # COMMANDLINE
+    from pystats.context.file_context import FileContext
 
 
 class ParsedFile:
@@ -32,7 +30,6 @@ class ParsedFile:
         classes: A list of top-level class `ClassBlock`s.
         methods: A dict mapping each class to a list of method `ClassBlock`s.
     """
-
 
     def __init__(self, filename, lines):
         """Initializes and parses the list of `lines`.

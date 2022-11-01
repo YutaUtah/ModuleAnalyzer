@@ -1,13 +1,12 @@
 import os
-import sys
 
 try:
     # DEBUG
-    from parsed_file          import ParsedFile
-    from report               import MarkdownReport
-    from utils.logging.logger import Logger
-    from utils.args_parser    import add_parser_options
-    from statistic            import (
+    from parsed_file import ParsedFile
+    from report import MarkdownReport
+    from logger.logger import Logger
+    from utils.args_parser import add_parser_options
+    from statistic import (
         NumModuleLines,
         NumFuncLines,
         NumMethodLines,
@@ -15,17 +14,24 @@ try:
         WarnNoDocstring,
         DunderMethodPythonPackage
     )
-except:
-# COMMANDLINE
-    from pystats.parsed_file          import ParsedFile
-    from pystats.statistic            import NumModuleLines, NumFuncLines, NumMethodLines, NumClassLines, WarnNoDocstring, DunderMethodPythonPackage
-    from pystats.report               import MarkdownReport
-    from pystats.utils.logging.logger import Logger
-    from pystats.utils.args_parser    import add_parser_options
-
+except Exception:
+    # COMMANDLINE
+    from pystats.parsed_file import ParsedFile
+    from pystats.report import MarkdownReport
+    from pystats.logger.logger import Logger
+    from pystats.utils.args_parser import add_parser_options
+    from pystats.statistic import (
+        NumModuleLines,
+        NumFuncLines,
+        NumMethodLines,
+        NumClassLines,
+        WarnNoDocstring,
+        DunderMethodPythonPackage
+    )
 
 
 logger = Logger(__name__).logger
+
 
 class PackageContext:
 
@@ -56,20 +62,15 @@ class PackageContext:
     def get_package_depth(root):
         return root.count(os.path.sep) - PackageContext.PACKAGE_BASE_DIR.count(os.path.sep)
 
-
     @staticmethod
     def get_abs_path_python_filenames(python_filenames):
-        # TODO: better way to write
-        # TODO: this isn't robust 'User/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/app/statistic.py'
-        return [os.path.join(PackageContext.PACKAGE_BASE_DIR, python_filename) for python_filename in python_filenames ]
-
+        return [os.path.join(PackageContext.PACKAGE_BASE_DIR, python_filename) for python_filename in python_filenames]
 
     @staticmethod
     def parse_args(arguments):
         '''Given a list of command-line arguments, returns them parsed.'''
         parser = add_parser_options(PackageContext)
         return parser.parse_args(arguments)
-
 
     @staticmethod
     def get_lines(filename):
@@ -83,7 +84,6 @@ class PackageContext:
             raise e
 
         return lines
-
 
     @staticmethod
     def parse_modules(filenames, verbose=False):
@@ -113,7 +113,7 @@ class PackageContext:
                         logger.error(f'ERROR OPENING {modulename}')
                     raise error
 
-                # Parse the lines
+                # Parse the lines. "lines" are the collection of the text lines in "filename"
                 if lines:
                     modules.append(ParsedFile(filename, lines))
                     if verbose:

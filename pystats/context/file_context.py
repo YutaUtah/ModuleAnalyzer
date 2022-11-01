@@ -1,10 +1,10 @@
 
 try:
-# DEBUG
-    from utils.logging.logger import Logger
-except:
-# COMMANDLINE
-    from pystats.utils.logging.logger import Logger
+    # DEBUG
+    from logger.logger import Logger
+except Exception:
+    # COMMANDLINE
+    from pystats.logger.logger import Logger
 
 logger = Logger(__name__).logger
 
@@ -50,9 +50,9 @@ class CodeBlock:
         - `lines` is ignored since it is optional.
         """
         return self.keyword == other.keyword and \
-               self.signature == other.signature and \
-               self.start == other.start and \
-               self.end == other.end
+            self.signature == other.signature and \
+            self.start == other.start and \
+            self.end == other.end
 
     def __hash__(self):
         """
@@ -155,7 +155,7 @@ class FileContext:
     @staticmethod
     def get_functions(lines, indent_level=0, offset=0):
         """Returns a list of `CodeBlock` functions at `indent_level`, relative to line index `offset`."""
-        return  FileContext.get_codeblocks(
+        return FileContext.get_codeblocks(
                                     lines,
                                     'def',
                                     indent_level=indent_level,
@@ -165,7 +165,7 @@ class FileContext:
     @staticmethod
     def get_classes(lines, indent_level=0, offset=0):
         """Returns a list of `CodeBlock` classes at `indent_level`, relative to line index `offset`."""
-        return  FileContext.get_codeblocks(
+        return FileContext.get_codeblocks(
                                     lines,
                                     'class',
                                     indent_level=indent_level,

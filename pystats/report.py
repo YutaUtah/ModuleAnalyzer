@@ -21,7 +21,7 @@ from abc import ABCMeta, abstractmethod
 
 
 class Report(metaclass=ABCMeta):
-    def __init__(self, parsed_files, statistics):
+    def __init__(self, parsed_files, statistics, tree):
         """Initialize a new report.
         Args:
             parsed_files: A list of `ParsedFile` objects
@@ -29,6 +29,7 @@ class Report(metaclass=ABCMeta):
         """
         self.parsed_files = parsed_files
         self.statistics = statistics
+        self.tree = tree
 
     def write(self, filename_base):
         """
@@ -81,15 +82,19 @@ class MarkdownReport(Report):
     def render(self):
         """Returns the report as a string."""
         markdown_lines = ['# `pystats` Report']
+
+        markdown_lines += ['```']
+        markdown_lines.extend(self.tree)
+        markdown_lines += ['```']
+
         markdown_lines += [f'**Num Modules:** {len(self.parsed_files)}']
-        # TODO: include _printTree maybe not a great idea to break encapsulation..... check this module L30
 
         # For each module ...
         for module in self.parsed_files:
             stats = self.statistics[module]
 
             # Start of module
-            markdown_lines += [f'\n---\n']
+            markdown_lines += ['\n---\n']
 
             # MODULE
             markdown_lines += [f'## module: {module.name}']
@@ -98,9 +103,9 @@ class MarkdownReport(Report):
                 markdown_lines += [f'- {s}' for s in stat.module_stats]
 
             # For each class ...
-            markdown_lines += [f'### Classes']
+            markdown_lines += ['### Classes']
             if not module.classes:
-                markdown_lines += [f'- No Class']
+                markdown_lines += ['- No Class']
 
             for class_block in module.classes:
                 # CLASS
@@ -113,7 +118,7 @@ class MarkdownReport(Report):
                         ]
 
                 # METHODS
-                markdown_lines += [f'**Methods.**']
+                markdown_lines += ['**Methods.**']
                 for method_block in sorted(module.methods[class_block],
                                            key=lambda mb: mb.signature):
                     markdown_lines += [f'- `{method_block.signature}`']
@@ -126,9 +131,9 @@ class MarkdownReport(Report):
                             ]
 
             # FUNCTIONS
-            markdown_lines += [f'### Functions']
+            markdown_lines += ['### Functions']
             if not module.functions:
-                markdown_lines += [f'- No Function']
+                markdown_lines += ['- No Function']
 
             for func_block in sorted(module.functions,
                                      key=lambda fb: fb.signature):

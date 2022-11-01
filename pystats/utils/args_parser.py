@@ -1,7 +1,7 @@
 import argparse
 
-def add_parser_options(app):
 
+def add_parser_options(app):
     parser = argparse.ArgumentParser()
 
     # One or more filenames are required.
@@ -21,8 +21,7 @@ def add_parser_options(app):
         default=[],
         nargs='*',
         choices=[s.name() for s in app.AVAILABLE_STATS],
-        help=
-        'include only the specified one or more stats (default: all stats)'
+        help='include only the specified one or more stats (default: all stats)'
     )
 
     # Specifying one or more reports is optional. By default, will generate a Markdown report.

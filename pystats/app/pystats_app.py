@@ -7,23 +7,24 @@ In a package, we can write imports either relative to the package `pystats`,
   or relative to this file using `.`.
 '''
 
-import os
 from collections import defaultdict
 from functools import wraps
+import os
 from plistlib import InvalidFileException
 
 try:
-# DEBUG
-    from config.config               import OUTPUT_FILENAME_BASE
-    from context.package_context     import PackageContext
-    from utils.format_tree           import DisplayablePath
-    from utils.logging.logger        import Logger
-except:
-# COMMANDLINE
-    from pystats.config.config        import OUTPUT_FILENAME_BASE
-    from pystats.utils.logging.logger import Logger
-    from pystats.context.package_context      import PackageContext
-    from pystats.utils.format_tree           import DisplayablePath
+    # DEBUG
+    from config.config import OUTPUT_FILENAME_BASE
+    print('hello')
+    from context.package_context import PackageContext
+    from utils.format_tree import DisplayablePath
+    from logger.logger import Logger
+except Exception:
+    # COMMANDLINE
+    from pystats.config.config import OUTPUT_FILENAME_BASE
+    from pystats.logger.logger import Logger
+    from pystats.context.package_context import PackageContext
+    from pystats.utils.format_tree import DisplayablePath
 
 
 logger = Logger(__name__).logger
@@ -39,7 +40,6 @@ class PyStatsApp:
         self.stats = defaultdict(list)
         self.verbose = verbose
 
-
     def __repr__(self):
         return (
             f"<class '{__name__}'>\n"
@@ -48,18 +48,16 @@ class PyStatsApp:
             f'           verbose={self.verbose})\n'
         )
 
-
     def _print_header(func):
         @wraps(func)
         def inner(self, python_packages):
-            print('================================================================')
-            print('============             TREE STRUCTURE             ============')
-            print('================================================================\n')
+            print('==========================================================')
+            print('=============         TREE STRUCTURE         =============')
+            print('==========================================================\n')
             func(self, python_packages)
-            print('\n================================================================')
+            print('\n==========================================================')
 
         return inner
-
 
     @_print_header
     def printTree(self, python_packages):
@@ -78,7 +76,6 @@ class PyStatsApp:
         '''
         self._printTree(python_packages)
 
-
     def getPaths(self, python_package):
         '''
         Get the list of package paths that are displayed as absolute path
@@ -89,32 +86,35 @@ class PyStatsApp:
         /Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/app/__init__.py
         /Users/yutahayashi/VisualStudioProjects/ModuleAnalyzer/pystats/app/pystats_app.py
         '''
-
-
-        #TODO: error handling
         if not isinstance(python_package, str):
-            raise TypeError(f'type mismatch (python_package): string is expected for {python_package}')
+            raise TypeError(
+                f'type mismatch: string is expected for {python_package}'
+            )
 
         try:
             return DisplayablePath.getPaths(python_package)
-
         except FileNotFoundError:
-            raise FileNotFoundError(f'Unable to get package paths: {python_package}')
+            raise FileNotFoundError(
+                f'Unable to get package paths: {python_package}'
+            )
 
     def getMarkdownPath(self, pakcage):
         try:
             return DisplayablePath.getMarkdownPath(pakcage)
-        except:
+        except FileNotFoundError:
             raise FileNotFoundError(f'Unable to get package paths: {pakcage}')
-            pass
 
     def getReports(self, packagename_path=[], target_creation_path=None):
         '''
-        Generates reports for given packages as a markdown format. Note that non-python file report will not be generated
+        Generates reports for given packages as a markdown format.
+        Note that non-python file report will not be generated
 
         Args:
-        - packagename_path: A list of targetd "absolute" package directory paths i.e. Mac starts from '/Users/yutahayashi/... Cannot be empty.
-        - target_creation_path: Absolute path that you wish to store your generated markdown report. If you leave it empty, your terminal/console path will be the root directory.
+        - packagename_path: A list of targetd absolute package directory paths
+        i.e. Mac starts from '/Users/yutahayashi/... Cannot be empty.
+        - target_creation_path:
+        Absolute path that you wish to store your generated markdown report.
+        If you leave it empty, your console path will be the root directory.
 
         Returns:
         - None (Writes the report file to disk.)
@@ -125,10 +125,14 @@ class PyStatsApp:
 
         if isinstance(packagename_path, list):
             if len(packagename_path) == 0:
-                raise FileNotFoundError('package path is absolute and mandatory field')
+                raise FileNotFoundError(
+                    'package path is absolute and mandatory field'
+                )
 
         else:
-            raise TypeError('Package absolute path needs to be in list: str object must be encolsed with []')
+            raise TypeError(
+                'Package absolute path needs to be in list: str object must be encolsed with []'
+            )
 
         try:
             package_file_paths = self.getPaths(packagename_path)
@@ -140,9 +144,13 @@ class PyStatsApp:
 
         for i, paths in enumerate(package_file_paths):
             existed_folders = set()
-            report_folder_base = os.path.join(target_creation_path, os.path.basename(packagename_path[i]) + '_report')
+            report_folder_base = os.path.join(
+                target_creation_path,
+                os.path.basename(packagename_path[i]) + '_report'
+            )
 
-            # Create the generate report base folder i.e. package_name + _report
+            # Create the generate report base folder
+            # i.e. package_name + _report
             os.makedirs(report_folder_base, exist_ok=True)
 
             for path in paths[1:]:
@@ -157,7 +165,7 @@ class PyStatsApp:
                             report_folder_base,
                             os.path.relpath(target_folder, packagename_path[i])
                         ),
-                    exist_ok=True
+                        exist_ok=True
                     )
                     existed_folders.add(target_folder)
 
@@ -170,7 +178,6 @@ class PyStatsApp:
 
                 with open(absolute_report_path, mode='w') as f:
                     f.write('hello!')
-
 
     def write_report(
         self,
@@ -198,32 +205,24 @@ class PyStatsApp:
             report.write(filename_base)
             if self.verbose:
                 logger.info(f'Saved {report.name()} to "{out_filename}".')
-        except:
+        except FileNotFoundError:
             if self.verbose:
                 logger.error(f'Error saving {report.name()} to "{out_filename}".')
 
+    def _printTree(self, python_package):
+        if isinstance(python_package, str):
+            try:
+                DisplayablePath.printTree(python_package)
+                return
 
-    def _printTree(self, python_packages):
-        if isinstance(python_packages, list):
-            if all(map(lambda x: isinstance(x, str), python_packages)):
-                try:
-                    for python_package in python_packages:
-                        DisplayablePath.printTree(python_package)
-                    return
-
-                except FileNotFoundError:
-                    raise FileNotFoundError(
-                        f'not package: {python_package}: please make sure if the path is appropriate'
-                    )
-            else:
-                raise TypeError(
-                    f'type mismatch (one of the elements in python_packages): all elements must be str. Check {python_packages}'
+            except FileNotFoundError:
+                raise FileNotFoundError(
+                    f'not package: {python_package}: please make sure if the path is appropriate'
                 )
-
-        raise TypeError(
-            f'type mismatch (python_packages): list is expected for your input: {python_packages}'
+        else:
+            raise TypeError(
+                f'type mismatch: [python_packages]: all elements must be str. Check {python_package}'
             )
-
 
     def run(
         self,
@@ -235,9 +234,9 @@ class PyStatsApp:
     ):
         '''
         Parses each Python file/module, computes each `stats` statistic per module,
-         then generates each of the `reports`.
+        then generates each of the `reports`.
         '''
-        #TODO: error handling
+        # TODO: error handling
         self.tree_markdown = self.getMarkdownPath(os.path.relpath(pypackage_paths, os.getcwd()))
 
         # Map each
@@ -297,5 +296,5 @@ class PyStatsApp:
                 ComputedReport,
                 self.stats,
                 self.tree_markdown,
-                filename_base=filename_base[0]
+                filename_base=filename_base
             )
