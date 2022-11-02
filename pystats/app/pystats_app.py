@@ -47,7 +47,7 @@ class PyStatsApp:
             f'           verbose={self.verbose})\n'
         )
 
-    def _print_header(func):
+    def header_log(func):
         @wraps(func)
         def inner(self, python_packages):
             print('==========================================================')
@@ -58,7 +58,7 @@ class PyStatsApp:
 
         return inner
 
-    @_print_header
+    @header_log
     def printTree(self, python_packages):
         '''
         Print the tree structure of specified python_packages.
@@ -230,7 +230,6 @@ class PyStatsApp:
         Parses each Python file/module, computes each `stats` statistic per module,
         then generates each of the `reports`.
         '''
-        # TODO: error handling
         self.tree_markdown = self.getMarkdownPath(os.path.relpath(pypackage_paths, os.getcwd()))
 
         # Map each
