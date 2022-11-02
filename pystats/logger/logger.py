@@ -1,10 +1,12 @@
 import logging
 import sys
 
-# COMMANDLINE
-# from pystats.utils.logging.config import LEVEL, FORMAT
-# DEBUG
-from logger.config import DisplayFormat
+try:
+    # COMMANDLINE
+    from pystats.logger.config import DisplayFormat
+except Exception:
+    # DEBUG
+    from logger.config import DisplayFormat
 
 
 class Logger(logging.Formatter):
