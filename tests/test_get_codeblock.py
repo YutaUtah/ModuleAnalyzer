@@ -1,6 +1,6 @@
 from collections import namedtuple
 import unittest
-from .parameterized import parameterized
+from parameterized import parameterized
 
 
 from pystats.context.file_context import CodeBlock, FileContext
