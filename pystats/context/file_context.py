@@ -125,7 +125,7 @@ class FileContext:
                                 keyword,
                                 block_sig,
                                 block_start + offset,
-                                i + offset,
+                                i+offset,
                                 lines=block_lines
                             )
                         )
@@ -156,18 +156,18 @@ class FileContext:
     def get_functions(lines, indent_level=0, offset=0):
         """Returns a list of `CodeBlock` functions at `indent_level`, relative to line index `offset`."""
         return FileContext.get_codeblocks(
-                                    lines,
-                                    'def',
-                                    indent_level=indent_level,
-                                    offset=offset
-                            )
+                    lines,
+                    'def',
+                    indent_level=indent_level,
+                    offset=offset
+                )
 
     @staticmethod
     def get_classes(lines, indent_level=0, offset=0):
         """Returns a list of `CodeBlock` classes at `indent_level`, relative to line index `offset`."""
         return FileContext.get_codeblocks(
-                                    lines,
-                                    'class',
-                                    indent_level=indent_level,
-                                    offset=offset
-                            )
+                    lines,
+                    'class',
+                    indent_level=indent_level,
+                    offset=offset
+                )
